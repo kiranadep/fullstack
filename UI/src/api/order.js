@@ -1,20 +1,36 @@
 import axios from "axios";
-import { API_BASE_URL, getHeaders } from "./constant";
+import { API_BASE_URL, getHeaders } from "./constant";  // Assuming getHeaders is imported from 'constant'
+import { getToken } from '../utils/jwt-helper'; // Assuming getToken is a utility function to get the token from localStorage
 
-export const placeOrderAPI = async (data)=>{
-    const url = API_BASE_URL + '/auth/orders/create';
-    try{
-        const response = await axios(url,{
-            method:"POST",
-            data:data,
-            headers:getHeaders()
-        });
-        return response?.data;
+export const placeOrderAPI = async (data) => {
+    const url = `${API_BASE_URL}/auth/orders/create`;
+    const token = getToken();  // Get the token
+  
+    console.log("Token:", token);  // Log the token for debugging
+  
+    if (!token) {
+      console.error("No token found, unable to make request.");
+      throw new Error("No token found, unable to make request.");
     }
-    catch(err){
-        throw new Error(err);
+  
+    try {
+      const response = await axios(url, {
+        method: "POST",
+        data: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      return response?.data;
+    } catch (err) {
+      console.error("Error placing order:", err);
+      throw new Error(err);
     }
-}
+  };
+  
+
 
 export const confirmPaymentAPI = async (data)=>{
     const url = API_BASE_URL + '/api/order/update-payment';
@@ -30,3 +46,39 @@ export const confirmPaymentAPI = async (data)=>{
         throw new Error(err);
     }
 }
+export const fetchOrderAPI = async (userId) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/auth/orders/${userId}`, {
+        headers: getHeaders(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching orders:", error.response || error);
+      throw error.response?.data || new Error("Failed to fetch orders.");
+    }
+  };
+  
+
+  export const cancelOrderAPI = async (orderId) => {
+    try {
+      // Make the PATCH request with the order status as a query parameter
+      const response = await axios.patch(
+        `${API_BASE_URL}/auth/orders/${orderId}/status`,  // Your PATCH API endpoint
+        null,  // No body is needed since we are passing the status as a query parameter
+        {
+          params: {
+            status: 'CANCELLED'  // The status you want to set for the order
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,  // Your token
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error canceling order:", error.response || error);
+      throw error.response?.data || new Error("Failed to cancel order.");
+    }
+  };
+  
+  

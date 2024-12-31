@@ -1,7 +1,6 @@
 package com.project.fullstack.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,73 +9,48 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "order_id")
-    private String orderid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderid;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderitems = new ArrayList<>();
-
-    private LocalDateTime orderDate;
-
-    private LocalDateTime deliveryDate;
-
+    private String orderDate;
+    private String deliveryDate;
     private String shippingAddress;
-
-    private double totalPrice;
-
+    private Double totalPrice;
     private String orderStatus;
+    private Integer totalItem;
 
-    private int totalItem;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
-    private LocalDateTime createAt;
 
-    public Order() {}
+    @Version
+    private Long version = 0L; // This field is required for optimistic locking
 
-    public String getShippingAddress() {
-        return shippingAddress;
-    }
-
-    public void setShippingAddress(String shippingAddress) {
-        this.shippingAddress = shippingAddress;
-    }
-
-    public Order(Long id, String orderid, User user, List<OrderItem> orderitems, LocalDateTime orderDate,
-                 LocalDateTime deliveryDate, String shippingAddress, double totalPrice, String orderStatus,
-                 int totalItem, LocalDateTime createAt) {
-        this.id = id;
+    public Order(Long orderid, User user, String orderDate, String deliveryDate, String shippingAddress, Double totalPrice, String orderStatus, Integer totalItem, List<OrderItem> orderItems) {
         this.orderid = orderid;
         this.user = user;
-        this.orderitems = orderitems;
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.shippingAddress = shippingAddress;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
         this.totalItem = totalItem;
-        this.createAt = createAt;
+        this.orderItems = orderItems;
     }
 
-    // Getters and setters for the fields
+    public Order() {
 
-    public Long getId() {
-        return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getOrderid() {
+    public Long getOrderid() {
         return orderid;
     }
 
-    public void setOrderid(String orderid) {
+    public void setOrderid(Long orderid) {
         this.orderid = orderid;
     }
 
@@ -88,36 +62,35 @@ public class Order {
         this.user = user;
     }
 
-    public List<OrderItem> getOrderitems() {
-        return orderitems;
-    }
-
-    public void setOrderitems(List<OrderItem> orderitems) {
-        this.orderitems = orderitems;
-    }
-
-    public LocalDateTime getOrderDate() {
+    public String getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDateTime orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 
-    public LocalDateTime getDeliveryDate() {
+    public String getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(LocalDateTime deliveryDate) {
+    public void setDeliveryDate(String deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
 
-    public double getTotalPrice() {
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
@@ -129,19 +102,19 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public int getTotalItem() {
+    public Integer getTotalItem() {
         return totalItem;
     }
 
-    public void setTotalItem(int totalItem) {
+    public void setTotalItem(Integer totalItem) {
         this.totalItem = totalItem;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

@@ -29,7 +29,7 @@ public class AppConfig {
                         .requestMatchers("/upload_imges/**", "/auth/categories/**", "/auth/products/**", "/auth/signin", "/auth/signup").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/auth/address").authenticated() // Ensure address APIs require authentication
-
+                        .requestMatchers("/auth/orders").authenticated()
                         .anyRequest().authenticated()
                 )
 

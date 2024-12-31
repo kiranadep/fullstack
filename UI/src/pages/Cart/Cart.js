@@ -12,10 +12,9 @@ import EmptyCart from '../../assets/img/empty_cart.png';
 import { getCartByUserId } from '../../api/cartApi';
 import { loadCartItems } from '../../store/features/cart';
 import { selectUserInfo } from "../../store/features/user";
-import { CartIcon } from '../../components/common/CartIcon';
 
 const headers = [
-  "Product Details", "Price", "Quantity", "Shipping", "SubTotal", "Action", "Order"
+  "Product Details", "Price", "Quantity", "Shipping", "SubTotal", "Action"
 ];
 
 const Cart = () => {
@@ -82,6 +81,9 @@ const Cart = () => {
   }, []);
   console.log('User Info:', userInfo);
 
+  const handleCheckout = () => {
+    navigate('/checkout', { state: { cartItems, subTotal } });
+  };
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -170,15 +172,7 @@ const Cart = () => {
                           <DeleteIcon />
                         </button>
                       </td>
-                      <td>
-                      <button
-                          className='flex justify-center items-center w-full'
-                          onClick={() => onDeleteProduct(item.productId, item.id)}
-                        >
-                        <CartIcon />
-                        </button>
-                      
-                      </td>
+
                       
                     </tr>
                   ))}
@@ -216,7 +210,7 @@ const Cart = () => {
                 <hr className='h-[2px] bg-slate-400 mt-2' />
                 <button
                   className='w-full items-center h-[48px] bg-black border rounded-lg mt-2 text-white hover:bg-gray-800'
-                  onClick={() => navigate("/checkout")}
+                  onClick={handleCheckout}
                 >
                   Checkout
                 </button>

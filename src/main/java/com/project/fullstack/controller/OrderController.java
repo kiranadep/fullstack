@@ -1,16 +1,23 @@
 package com.project.fullstack.controller;
 
-import com.project.fullstack.model.Order;
+import com.project.fullstack.dto.ErrorResponse;
+import com.project.fullstack.dto.OrderDTO;
 import com.project.fullstack.exception.OrderException;
 import com.project.fullstack.service.OrderService;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/auth")
 public class OrderController {
 
@@ -23,34 +30,45 @@ public class OrderController {
 
     // Create a new order (including order items)
     @PostMapping("/orders/create")
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order createdOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    public ResponseEntity<Object> createOrders(@Valid @RequestBody List<OrderDTO> orderDTOs) {
+        try {
+            List<OrderDTO> createdOrders = orderDTOs.stream()
+                    .map(orderService::createOrder)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(createdOrders, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+
+
+
     // Get a specific order by its ID
-    @GetMapping("/orders/{orderId}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
+
+    @GetMapping("/orders/{userId}")
+    public ResponseEntity<List<OrderDTO>> getOrdersByUserId(@PathVariable Long userId) {
         try {
-            Order order = orderService.findOrderById(orderId);
-            return new ResponseEntity<>(order, HttpStatus.OK);
+            List<OrderDTO> orders = orderService.getOrdersByUserId(userId);
+            return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (OrderException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
-
     // Get all orders
     @GetMapping("/orders")
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<OrderDTO> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     // Update the order status (Confirmed, Shipped, Delivered, etc.)
     @PatchMapping("/orders/{orderId}/status")
-    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long orderId, @RequestParam String status) {
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId, @RequestParam String status) {
         try {
-            Order updatedOrder = orderService.updateOrderStatus(orderId, status);
+            OrderDTO updatedOrder = orderService.updateOrderStatus(orderId, status);
             return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
         } catch (OrderException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -58,7 +76,7 @@ public class OrderController {
     }
 
     // Delete an order by its ID
-    @DeleteMapping("/orders/{orderId}")
+    @DeleteMapping("/orders/delete/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
         try {
             orderService.deleteOrder(orderId);

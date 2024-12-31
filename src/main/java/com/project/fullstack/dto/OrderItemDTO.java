@@ -1,39 +1,20 @@
-package com.project.fullstack.model;
+package com.project.fullstack.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "order_items")
-public class OrderItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false) // Customize the column name here
-    private Order order;
-
+public class OrderItemDTO {
     private Long productId;
     private Integer quantity;
     private Double price;
-
     // Getters and Setters
 
-    public Long getId() {
-        return id;
+
+    public OrderItemDTO(Long productId, Integer quantity, Double price) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.price = price;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public OrderItemDTO() {
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public Long getProductId() {
@@ -59,4 +40,5 @@ public class OrderItem {
     public void setPrice(Double price) {
         this.price = price;
     }
+
 }

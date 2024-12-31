@@ -90,27 +90,3 @@ export const getAddressAPI = async (userId) => {
 };
 
 // Fetch user orders
-export const fetchOrderAPI = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/auth/order/user`, {
-      headers: getHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching orders:", error.response || error);
-    throw error.response?.data || new Error("Failed to fetch orders.");
-  }
-};
-
-// Cancel order
-export const cancelOrderAPI = async (id) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/auth/order/cancel/${id}`, null, {
-      headers: getHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error canceling order:", error.response || error);
-    throw error.response?.data || new Error("Failed to cancel order.");
-  }
-};
