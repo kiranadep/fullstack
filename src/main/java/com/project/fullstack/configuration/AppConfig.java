@@ -3,6 +3,7 @@ package com.project.fullstack.configuration;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,10 +27,12 @@ public class AppConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/upload_imges/**", "/auth/categories/**", "/auth/products/**", "/auth/signin", "/auth/signup").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/auth/address").authenticated() // Ensure address APIs require authentication
-                        .requestMatchers("/auth/orders").authenticated()
+                        .requestMatchers("/auth/address").authenticated() // Ensure address APIs require authentication.requestMatchers("/auth/orders/**").authenticated()
+                        .requestMatchers("/auth/orders/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
 
@@ -54,15 +57,22 @@ public class AppConfig {
                 "http://localhost:3000",
                 "http://localhost:3001",
                 "http://localhost:4200"
-        ));
-
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        )); // Add all required front-end origins
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Access-Control-Allow-Headers",
+                "X-Requested-With",
+                "Accept"
+        ));
+        configuration.setExposedHeaders(Arrays.asList("Authorization")); // If needed
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

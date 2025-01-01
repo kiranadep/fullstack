@@ -7,6 +7,7 @@ import AddAddress from "../Account/AddAddress";
 import axios from "axios"; // Import axios for API requests
 import { API_BASE_URL, getHeaders } from "../../api/constant";
 import { getToken } from '../../utils/jwt-helper';
+import { deleteItemFromCartAction } from '../../store/actions/cartAction';
 const Checkout = () => {
   const location = useLocation();
   const { cartItems } = location.state || {};
@@ -87,12 +88,12 @@ const Checkout = () => {
     try {
       dispatch(setLoading(true));
       const orderData = prepareOrderData();
-      
+  
       // Send the array of OrderDTO with all required fields to the backend
-      const token = getToken()
+      const token = getToken();
       const response = await axios.post(
         `${API_BASE_URL}/auth/orders/create`,
-        orderData,  // This should be an array of OrderDTO
+        orderData, // This should be an array of OrderDTO
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,6 +103,12 @@ const Checkout = () => {
       );
   
       console.log("Order confirmed:", response.data);
+  
+      // Delete items from cart after order confirmation
+      cartItems.forEach((item) => {
+        dispatch(deleteItemFromCartAction({ cartItemId: item.id, userId: userInfo.id }));
+      });
+  
       navigate("/orderConfirmed"); // Redirect after confirming order
     } catch (error) {
       console.error("Error confirming order:", error);
@@ -109,6 +116,7 @@ const Checkout = () => {
       dispatch(setLoading(false));
     }
   };
+  
   
   return (
     <div className="p-8 flex">

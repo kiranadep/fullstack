@@ -69,13 +69,15 @@ const Orders = () => {
 
   const onCancelOrder = useCallback(
     (id) => {
+      console.log("Cancel Order ID:", id);
       dispatch(setLoading(true));
-      cancelOrderAPI(id)  // Call the PATCH API to cancel the order
+      cancelOrderAPI(id) // Call the PATCH API to cancel the order
         .then((res) => {
-          dispatch(cancelOrder(id));  // Update the Redux store with the canceled status
+          console.log("Cancel API Response:", res);
+          dispatch(cancelOrder(id)); // Update the Redux store with the canceled status
         })
         .catch((err) => {
-          // Handle any errors here
+          console.error("Cancel API Error:", err);
         })
         .finally(() => {
           dispatch(setLoading(false));
@@ -83,6 +85,7 @@ const Orders = () => {
     },
     [dispatch]
   );
+  
   
   
 
@@ -150,7 +153,7 @@ const Orders = () => {
                         );
                       })}
                       <div className="flex justify-between">
-                        <p>Total : ${order?.totalAmount}</p>
+                        <p>Total : ${order?.price}</p>
                         <button
                           onClick={() => setSelectedOrder(null)}
                           className="text-blue-900 text-right rounded underline cursor-pointer"

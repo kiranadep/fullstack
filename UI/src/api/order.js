@@ -61,24 +61,29 @@ export const fetchOrderAPI = async (userId) => {
 
   export const cancelOrderAPI = async (orderId) => {
     try {
-      // Make the PATCH request with the order status as a query parameter
-      const response = await axios.patch(
-        `${API_BASE_URL}/auth/orders/${orderId}/status`,  // Your PATCH API endpoint
-        null,  // No body is needed since we are passing the status as a query parameter
-        {
-          params: {
-            status: 'CANCELLED'  // The status you want to set for the order
-          },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,  // Your token
-          },
-        }
+        const token = getToken(); // Ensure token is set correctly
+        console.log(token);
+        if (!token) throw new Error("No token found.");
+
+        const response = await axios.patch(
+          `${API_BASE_URL}/auth/orders/${orderId}/status`, 
+          null, // Body is null because query parameters are used
+          {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+              },
+              params: {
+                  status: "CANCELLED", // Query parameter should be 'status'
+              },
+          }
       );
-      return response.data;
+      
+        return response.data;
     } catch (error) {
-      console.error("Error canceling order:", error.response || error);
-      throw error.response?.data || new Error("Failed to cancel order.");
+        console.error("Error canceling order:", error.response || error);
+        throw error.response?.data || new Error("Failed to cancel order.");
     }
-  };
-  
+};
+
   

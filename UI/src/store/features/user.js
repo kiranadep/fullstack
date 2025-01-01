@@ -27,12 +27,15 @@ export const userSlice = createSlice({
       state.orders = action.payload; // Directly set the orders array
     },
     cancelOrder: (state, action) => {
+      console.log("Cancel Order Payload:", action.payload);
       state.orders = state.orders.map((order) =>
-        order.id === action.payload
+        order.orderid === action.payload
           ? { ...order, orderStatus: "CANCELLED" }
           : order
       );
     },
+    
+    
   },
 });
 
