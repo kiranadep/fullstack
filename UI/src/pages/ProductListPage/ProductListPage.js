@@ -39,7 +39,7 @@ const ProductListPage = () => {
   
         const res = await axios.get(url, {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}` // Add token here
+            "Authorization": `Bearer ${localStorage.getItem(" ")}` // Add token here
           }
         });
         setProducts(res.data);

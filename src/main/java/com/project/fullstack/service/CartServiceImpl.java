@@ -171,7 +171,7 @@ public class CartServiceImpl implements CartService {
                 .map(item -> {
                     // Calculate price by multiplying unit price with quantity
                     double price = item.getProduct().getPrice() * item.getQuantity();
-                    return new CartItemDTO(item.getId(), item.getProduct().getId(), item.getProduct().getName(),
+                    return new CartItemDTO(item.getId(), item.getProduct().getId(), item.getProduct().getName(),item.getProduct().getImagePath(),
                             item.getQuantity(), item.getSize(), item.getProduct().getPrice());  // Add price here
                 })
                 .collect(Collectors.toList());

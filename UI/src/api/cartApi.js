@@ -15,6 +15,7 @@ export const getCartByUserId = async (userId) => {
     const response = await axios.get(`http://localhost:8080/auth/cart/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,  // Attach token to the request headers
+        "Content-Type": "application/json",
       },
     });
     console.log('Cart data:', response.data);  // Log the response to see if cart data is returned

@@ -7,12 +7,13 @@ public class CartItemDTO {
     private int quantity;
     private String size;
     private double price;
+    private String imagePath;
 
-
-    public CartItemDTO(Long id, Long productId, String productName, int quantity, String size, double price) {
+    public CartItemDTO(Long id, Long productId, String productName,String imagePath, int quantity, String size, double price) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
+        this.imagePath = imagePath;
         this.quantity = quantity;
         this.size = size;
         this.price = price;
@@ -67,6 +68,14 @@ public class CartItemDTO {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
 // Getters and setters

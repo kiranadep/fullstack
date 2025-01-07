@@ -46,11 +46,11 @@ const Orders = () => {
             : isCompleted
             ? 'COMPLETED'
             : order?.orderStatus, // Mark as COMPLETED if the delivery date has passed
-        items: order?.orderItemList?.map((orderItem) => {
+        items: order?.orderItems?.map((orderItem) => {
           return {
             id: orderItem?.id,
-            name: orderItem?.product?.name,
-            price: orderItem?.product?.price,
+            name: orderItem?.productName,
+            price: orderItem?.price,
             quantity: orderItem?.quantity,
             url: orderItem?.product?.resources?.[0]?.url,
             slug: orderItem?.product?.slug,
@@ -125,17 +125,17 @@ const Orders = () => {
                         <p>Order Status : {order?.orderStatus}</p>
                         <button
                           onClick={() =>
-                            setSelectedOrder(selectedOrder === order?.id ? null : order?.id)
+                            setSelectedOrder(selectedOrder === order?.orderid ? null : order?.orderid)
                           }
                           className="text-blue-900 text-right rounded underline cursor-pointer"
                         >
-                          {selectedOrder === order?.id ? 'Hide Details' : 'View Details'}
+                          {selectedOrder === order?.orderid ? 'Hide Details' : 'View Details'}
                         </button>
                       </div>
                     </div>
                   </div>
 
-                  {selectedOrder === order?.id && (
+                  {selectedOrder === order?.orderid && (
                     <div>
                       {order?.items?.map((orderItem, index) => {
                         return (
@@ -146,8 +146,8 @@ const Orders = () => {
                               className="w-[120px] h-[120px] object-cover m-2 rounded"
                             />
                             <div className="flex flex-col text-sm py-2 text-gray-600">
-                              <p>{orderItem?.name || 'Name'}</p>
-                              <p>Quantity {orderItem?.quantity}</p>
+                              <p>Product Name :{orderItem?.name || 'Name'}</p>
+                              <p>Quantity :{orderItem?.quantity}</p>
                             </div>
                           </div>
                         );
