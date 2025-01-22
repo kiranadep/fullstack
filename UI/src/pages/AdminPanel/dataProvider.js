@@ -35,22 +35,34 @@ const customDataProvider = (apiUrl, httpClient) => {
     getMany: (resource, params) => {
       if (resource === 'categories') {
         const ids = params.ids;
-        return fetch(`/auth/categories?ids=${ids.join(',')}`)
+        return fetch(`${apiUrl}/auth/categories?ids=${ids.join(',')}`)
           .then(response => {
             if (!response.ok) {
               throw new Error('Failed to fetch categories');
             }
-            return response.json(); 
+            return response.json(); // Ensure backend response contains the required structure
           })
-          .then(data => ({
-            data: data.categories, 
-          }))
+          .then(data => {
+            if (!Array.isArray(data)) {
+              throw new Error('Backend response for getMany is not an array');
+            }
+            return {
+              data: data.map(category => ({
+                id: category.id, // Ensure each object has an `id` field
+                ...category,
+              })),
+            };
+          })
           .catch(error => {
-            console.error('Error fetching categories:', error);
+            console.error('Error in getMany for categories:', error);
             return { data: [] };
           });
+      } else {
+        console.error(`getMany not implemented for resource: ${resource}`);
+        return Promise.resolve({ data: [] });
       }
     },
+    
 
     // Fetch a single resource
     getOne: async (resource, params) => {

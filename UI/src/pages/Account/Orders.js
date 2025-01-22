@@ -37,15 +37,18 @@ const Orders = () => {
         orderDate: order?.orderDate,
         orderStatus: order?.orderStatus,
         status:
-          order?.orderStatus === 'PENDING' ||
-          order?.orderStatus === 'IN_PROGRESS' ||
-          order?.orderStatus === 'SHIPPED'
-            ? 'ACTIVE'
-            : order?.orderStatus === 'DELIVERED'
-            ? 'COMPLETED'
-            : isCompleted
-            ? 'COMPLETED'
-            : order?.orderStatus, // Mark as COMPLETED if the delivery date has passed
+        order?.orderStatus === 'CANCELLED'
+          ? 'CANCELLED'
+          : order?.orderStatus === 'PENDING' ||
+            order?.orderStatus === 'IN_PROGRESS' ||
+            order?.orderStatus === 'SHIPPED'
+          ? 'ACTIVE'
+          : order?.orderStatus === 'DELIVERED'
+          ? 'COMPLETED'
+          : isCompleted
+          ? 'COMPLETED'
+          : order?.orderStatus,
+      
         items: order?.orderItems?.map((orderItem) => {
           return {
             id: orderItem?.id,

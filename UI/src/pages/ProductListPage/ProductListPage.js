@@ -11,12 +11,15 @@ const ProductListPage = () => {
 
   // Fetch categories from backend
   useEffect(() => {
-    axios
-    .get("http://localhost:8080/auth/categories", {
+
+
+    axios.get("http://localhost:8080/auth/categories", {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json"
       }
     })
+    
     .then((res) => {
       setCategories(res.data);
     })
@@ -39,7 +42,7 @@ const ProductListPage = () => {
   
         const res = await axios.get(url, {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem(" ")}` // Add token here
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}` // Add token here
           }
         });
         setProducts(res.data);
